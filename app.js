@@ -1,19 +1,23 @@
 const express = require("express");
 const cors = require("cors");
-const bodyParser = require("body-parser");
 const connectDb = require("./config/config");
-const user = require("./routes/userRoute");
-
+const { graphqlHTTP } = require('express-graphql');
+const schema = require("./schema/schema");
 require("dotenv").config();
 const app = express();
 app.use(cors());
-app.use(express.json());
-app.use(bodyParser.json()); // Parse JSON bodies
-app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
+// Parse URL-encoded bodies
 
 const port = process.env.PORT;
+console.log(port);
 
-app.use("/", user);
+app.use(
+    "/graphql",
+    graphqlHTTP({
+        schema,
+        graphiql: true,
+    })
+);
 
 connectDb()
     .then(() => {
